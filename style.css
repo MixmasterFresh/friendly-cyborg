@@ -1,0 +1,83 @@
+#grad {
+  background: #0464A3; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(left, #0464A3 , rgb(8, 209, 98)); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(right, #0464A3, rgb(8, 209, 98)); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(right, #0464A3, rgb(8, 209, 98)); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(to right, #0464A3 , rgb(8, 209, 98)); /* Standard syntax */
+  background-size: 100% 190%;
+  text-align: center;
+}
+
+@media (min-width: 576px) {
+  .card-columns {
+      column-count: 1;
+  }
+}
+
+@media (min-width: 768px) {
+  .card-columns {
+      column-count: 2;
+  }
+}
+
+@media (min-width: 992px) {
+  .card-columns {
+      column-count: 3;
+  }
+}
+
+@media (min-width: 1200px) {
+  .card-columns {
+      column-count: 3;
+  }
+}
+
+a.unstyled,
+a.card {
+  display: inline-block;
+  color: inherit; /* blue colors for links too */
+  text-decoration: inherit;
+}
+
+.card > div > h4 {
+  font-weight: 600 !important;
+}
+
+.card {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  width: 100%;
+}
+
+.card:hover {
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.top-buffer {
+  margin-top:40px;
+}
+
+.footer {
+  width: 100%;
+  margin-top: 40px;
+  height: 60px;
+  line-height: 60px;
+  background-color: #f5f5f5;
+}
+
+.righty {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+  float: right;
+}
+
+#reference {
+  visibility:hidden;
+  display:none;
+}
+
+.checkbox {
+  float: left;
+  margin: 17px 0 0 30px;
+}

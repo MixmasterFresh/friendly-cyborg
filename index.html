@@ -1,0 +1,169 @@
+<head>
+    <title>Notes</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link href="/style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+
+    <meta charset="UTF-8">
+    <meta name="description" content="[Insert Description]">
+
+    <meta property="og:title" content="">
+    <meta property="og:image" content="link_to_image">
+    <meta property="og:description" content="description goes here">
+
+    <meta property="twitter:card" content="summary">
+    <script>
+        var id = "1";
+        var getNoteURL = "https://lxmx5yu7r7.execute-api.us-east-1.amazonaws.com/prod/get-notes-for-user-dev-getNotes";
+        var postNoteURL = "https://lxmx5yu7r7.execute-api.us-east-1.amazonaws.com/prod/post-notes-dev-postNotes";
+
+        function getAllNotes(){
+            $.ajax({
+                type: "POST",
+                url: getNoteURL,
+                data: JSON.stringify({"id": id}),
+                crossDomain: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(result) {
+                    result.data.forEach(function(element) {
+                        prependNote(element);
+                    });
+                }
+            });
+        }
+
+        function prependNote(data){
+            let note = $('#reference').clone(true)[0]
+            note.id = "note"
+            let fields = note.children[0].children[0].children
+            fields[0].children[0].value = data[0]
+            fields[1].value = data[1]
+            fields[2].value = data[5]
+            fields[3].value = data[3]
+            if(data[2] === "Yes"){
+                fields[4].children[0].checked = true;
+            }
+            $(note).prependTo('.card-columns')
+        }
+
+        function createNote(){
+            data = {"note": ["Title","Note Contents","No",id,"No"]}
+            $.ajax({
+                type: "POST",
+                url: postNoteURL,
+                data: JSON.stringify(data),
+                crossDomain: true,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(result) {
+                    console.log(result.data.index);
+                    let note = data['note']
+                    note.push(result.data.index);
+                    prependNote(note);
+                }
+            });
+        }
+
+        function getJsonFromForm(form) {
+            let inter = {}
+            form.serializeArray().forEach(function(element) {
+                inter[element['name']] = element['value']
+            });
+
+            let data = {};
+            data['position'] = inter['position'];
+            data['note'] = [inter['title'], inter['text'], "No", id, "No"];
+            if(inter['done'] == "on"){
+                data['note'][2] = "Yes"
+            }
+            return data;
+        }
+
+        $(document).ready(function() {
+
+            $('form').submit( function(e) {
+                e.preventDefault();
+                data = getJsonFromForm($(this));
+                console.log(data);
+                $.ajax({
+                    type: "POST",
+                    url: postNoteURL,
+                    data: JSON.stringify(data),
+                    crossDomain: true,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                });
+                return false;
+            });
+
+            $('button[type=delete]').click(function(e) {
+                e.preventDefault();
+                form = $(this).closest('form');
+                data = getJsonFromForm(form);
+                data['note'][4] = "Yes"
+                $.ajax({
+                    type: "POST",
+                    url: postNoteURL,
+                    data: JSON.stringify(data),
+                    crossDomain: true,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(result){
+                        let card = form.closest('.card');
+                        card.remove();
+                    }
+                });
+            });
+
+            getAllNotes();
+        });
+    </script>
+</head>
+<body>
+
+    <div class="jumbotron" id="grad">
+        <div id=graph>
+        <a class="unstyled" href="/"><h1 class="display-3">Notes</h1></a><br>
+        <button class="btn btn-primary" onClick="createNote()">New Note</button>
+        </div>
+    </div>
+
+    <div class="container col-md-12">
+        <div class="col-md-10" style="margin:auto;">
+            <div class="row">
+                <div class="card-columns">
+
+                    <div class="card" id="reference">
+                        <div class="card-body">
+                            <form>
+                            <!-- <form action="https://lxmx5yu7r7.execute-api.us-east-1.amazonaws.com/prod/post-notes-dev-postNotes"> -->
+                                <h4 class="card-title"><input type="text" class="form-control special" name="title" value="Title"></h4>
+                                <textarea class="form-control" name="text" rows="5" id="comment">Note Contents</textarea>
+                                <input type="hidden" name="position" value="1">
+                                <input type="hidden" name="id" value="1">
+                                <div class="checkbox">
+                                    <input class="form-check-input" type="checkbox" name="done" value="on"><p>Done</p>
+                                </div>
+                                <button type="delete" class="btn btn-danger righty">Delete</button>
+                                <button type="submit" class="btn btn-primary righty">Save</button>
+                            </form>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">Nutritious and Delicious</span>
+        </div>
+    </footer>
+</body>
